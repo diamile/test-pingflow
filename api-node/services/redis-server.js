@@ -16,7 +16,25 @@ function publishConfData(data){
     })
 }
 
+function receiveRedisDataFromKey(){
+    const key = "dataKeys";
+
+redisClient.get(key)
+.then(res => {
+    if (res) {
+    const response = JSON.parse(res);
+     console.log('response',response);
+    } else {
+    console.log(`La clé "${key}" n'existe pas dans Redis.`);
+    }
+})
+.catch(error => {
+    console.error('Erreur lors de la récupération des données depuis Redis:', error);
+})
+}
+
 exports.publishConfData = publishConfData;
+exports.receiveRedisDataFromKey=receiveRedisDataFromKey
 
 
 
