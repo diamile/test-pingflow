@@ -1,5 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import {fetchAllProductFromService,getSocket} from '@/services/product.service';
+
 
 export const useProductStore = defineStore('productStore',  {
   state:()=>({
@@ -20,7 +22,13 @@ export const useProductStore = defineStore('productStore',  {
      */
     async fetchAllProducts() {
       try{
-      
+        await fetchAllProductFromService()
+        const socket = await getSocket();
+
+        socket.on('message', (data) => {
+          console.log('data', (JSON.parse(data)))
+           this.products= data
+      });
       }catch(err){
         console.log('Error',err)
       }

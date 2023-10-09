@@ -15,7 +15,6 @@ export async function fetchAllProductFromService(){
 
         socket.emit('ok', 'sendata')
         
-        console.log('response from',response)
     } catch(err){
         throw err;
     }
@@ -26,7 +25,6 @@ export function getSocket(){
        
      return socket
         
-       
     } catch(err){
         throw err;
     }
