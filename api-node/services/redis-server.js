@@ -16,14 +16,26 @@ function publishConfData(data){
     })
 }
 
-function receiveRedisDataFromKey(){
-    const key = "dataKeys";
+function receiveRedisDataFromKey(io){
+    const key = "dataKey";
 
 redisClient.get(key)
 .then(res => {
     if (res) {
     const response = JSON.parse(res);
      console.log('response',response);
+     io.on('connection', (socket) => {
+        console.log('Un client s\'est connecté');
+    
+        socket.on('ok', (data) => {
+          console.log('Message reçu du client :', data);
+         
+          const response =JSON.stringify(res)
+          socket.emit('message', response);
+         
+        })
+    
+      });
     } else {
     console.log(`La clé "${key}" n'existe pas dans Redis.`);
     }

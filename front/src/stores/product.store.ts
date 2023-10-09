@@ -26,8 +26,8 @@ export const useProductStore = defineStore('productStore',  {
         const socket = await getSocket();
 
         socket.on('message', (data) => {
-          console.log('data', (JSON.parse(data)))
-           this.products= data
+          const response = (JSON.parse(data))
+           this.products= JSON.parse(response)
       });
       }catch(err){
         console.log('Error',err)
