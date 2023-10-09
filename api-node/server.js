@@ -12,6 +12,16 @@ const data = {
     url:config.URL_API
 }
 publishConfData(data)
-receiveRedisDataFromKey();
 
-app.listen(config.SERVER_PORT,()=>{console.log(`server is running on port ${config.SERVER_PORT}`)})
+const server = http.createServer(app);
+
+const io = require("socket.io")(server, {
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST"],
+      credentials: true
+    }
+  });
+receiveRedisDataFromKey(io);
+
+server.listen(config.SERVER_PORT,()=>{console.log(`server is running on port ${config.SERVER_PORT}`)})

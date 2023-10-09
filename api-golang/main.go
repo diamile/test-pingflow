@@ -13,6 +13,7 @@ import (
 
 func main() {
 	go StartRedisServer()
+
 	http.HandleFunc("/", home)
 
 	startserver()
@@ -78,7 +79,7 @@ func StartRedisServer() {
 
 		// Afficher la réponse JSON dans la console (log)
 
-		key := "dataKeys"
+		key := "dataKey"
 		err = client.Set(key, string(body), time.Minute).Err()
 		if err != nil {
 			fmt.Println("Erreur de décodage JSON")
