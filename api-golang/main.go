@@ -136,6 +136,7 @@ func listenCrontab() {
 
 		if pong == "PONG" {
 			if err := client.Publish("new_crontab_channel", "ok").Err(); err != nil {
+				client.Publish("new_crontab_channel", "ko").Err()
 				log.Println("Erreur lors de la republication du message:", err)
 			} else {
 				fmt.Printf("Message republié sur le canal '%s'\n", "new_crontab_channel")
