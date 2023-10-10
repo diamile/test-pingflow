@@ -6,7 +6,7 @@ const config = require('dotenv').config().parsed
         port: config.REDIS_PORT,
 });
 
-
+//publication de la conf de l'api externe via un channel redis
 function publishConfData(data){
     redisClient.publish(data.channel, JSON.stringify(data), (error, count) => {
         if (error) {
@@ -17,28 +17,27 @@ function publishConfData(data){
     })
 }
 
+//fonction qui gére la recupération des produits via un clé redis
 function receiveRedisDataFromKey(io){
-    const key = "dataKey";
-
-redisClient.get(key)
-.then(res => {
-    if (res) {
-    const response = JSON.parse(res);
-     console.log('response',response);
-     io.on('connection', (socket) => {
-        console.log('Un client s\'est connecté');
-    
-        socket.on('ok', (data) => {
-          console.log('Message reçu du client :', data);
-         
-          const response =JSON.stringify(res)
-          socket.emit('message', response);
-         
-        })
-    
-      });
+    redisClient.get(config.REDIS_KEY)
+    .then(res => {
+        if (res) {
+        const response = JSON.parse(res);
+        console.log('response',response);
+        io.on('connection', (socket) => {
+            console.log('Un client s\'est connecté');
+        
+            socket.on('ok', (data) => {
+            console.log('Message reçu du client :', data);
+            
+            const response =JSON.stringify(res)
+            socket.emit('message', response);
+            
+            })
+        
+        });
     } else {
-    console.log(`La clé "${key}" n'existe pas dans Redis.`);
+    console.log(`La clé "${config.REDIS_KEY}" n'existe pas dans Redis.`);
     }
 })
 .catch(error => {

@@ -16,10 +16,12 @@ const data = {
     channel:config.REDIS_CHANNEL,
     url:config.URL_API
 }
+
 publishConfData(data)
 
 const server = http.createServer(app);
 
+//creation de mon serveur socket
  const io = require("socket.io")(server, {
     cors: {
       origin: "*",
@@ -34,10 +36,11 @@ const client = new Redis({
   port: config.REDIS_PORT,
 });
 
+// initialisation des contabs
 initCronTab(redisClient,client,io);
 
 
-
+//server http
 server.listen(config.SERVER_PORT,()=>{console.log(`server is running on port ${config.SERVER_PORT}`)})
 
 
