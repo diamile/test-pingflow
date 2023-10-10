@@ -4,39 +4,46 @@ import {fetchAllProductFromService,getSocket,updateProductFromService,deletedPro
 
 
 export const useProductStore = defineStore('productStore',  {
-  state:()=>({
-     products:[]
-  }),
-  getters:{
-    getProducts(state){
-      return state.products
-    },
+    state:()=>({
+      products:[],
+      redisInfo:{}
+    }),
+    getters:{
+      getProducts(state){
+        return state.products
+      },
 
-  },
+    },
   actions:{
 
+  /**
+   * @description action qui gére la recupération de tous les data via le socket de l'api-node
+   * @param {*}  
+   * @returns  Promise
+   */
+      async fetchAllProducts() {
+        try{
+          await fetchAllProductFromService()
+          const socket = await getSocket();
+
+          socket.on('message', (data) => {
+            const response = (JSON.parse(data))
+            this.products= JSON.parse(response)
+        });
+        }catch(err){
+          console.log('Error',err)
+        }
+      },
+
     /**
-     * @description action qui gére la recupération de tous les data
+     * @description action qui gére la modification du produit via le titre
      * @param {*}  
      * @returns  Promise
      */
-    async fetchAllProducts() {
-      try{
-        await fetchAllProductFromService()
-        const socket = await getSocket();
-
-        socket.on('message', (data) => {
-          const response = (JSON.parse(data))
-           this.products= JSON.parse(response)
-      });
-      }catch(err){
-        console.log('Error',err)
-      }
-    },
 
     async updateProduct(body){
       try{
-        const response = await updateProductFromService(body);
+        await updateProductFromService(body);
        
         const productUpdate = this.products.map((item)=>{
            if(item.id == body.id){
@@ -54,17 +61,45 @@ export const useProductStore = defineStore('productStore',  {
       }
     },
 
+    /**
+     * @description action qui gére la suppression d'une produit via son identifiant
+     * @param {*}  
+     * @returns  Promise
+     */
     async deletedProduct(body){
       try{
-        const response = await deletedProductFromService(body);
+        await deletedProductFromService(body);
         const productDeleted = this.products.filter((item)=>item.id != body.id)
         this.products = productDeleted
         
       }catch(err){
         console.log(err)
       }
+    },
+
+    /**
+     * @description action qui recupére le status du  serveur redis via socket
+     * @param {*}  
+     * @returns  Promise
+     */
+    async getRedisServerStatus(info:any){
+      try{
+        const data = {
+          server:'redis',
+          status:info,
+          display:true
+        }
+        this.redisInfo = data
+
+        setTimeout(()=>{
+         this.redisInfo.display=false
+         this.redisInfo = this.redisInfo
+        },5000)
+      }catch(err){
+        console.log('err',err)
+      }
     }
-    
+   
     },
 })
   

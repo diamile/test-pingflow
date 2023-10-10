@@ -3,6 +3,7 @@ import {ref,defineProps} from "vue"
 import {useProductStore} from "@/stores/product.store"
 import Swal from 'sweetalert2'
 const store = useProductStore();
+import {getColorFromCategory} from "@/utiles/index"
 
 let columns= [
         {
@@ -52,8 +53,8 @@ let columns= [
        
 ]
 
+//fonction qui gére la modale d'edition
 async function edit(item: { id: any; }){
- 
     const { value: title } = await Swal.fire({
     title: 'Modification du titre',
     input: 'text',
@@ -81,6 +82,7 @@ async function edit(item: { id: any; }){
    
 }
 
+//fonction qui gére la modale de suppression 
 async function deleted(item: { id: any; }){
     Swal.fire({
     title: 'Voulez-vous vraiment supprimer ce produit?',
@@ -102,6 +104,15 @@ async function deleted(item: { id: any; }){
 
 <template>
 
+<v-alert
+  v-if="store.redisInfo.display"
+    color="success"
+    icon="mdi-check-circle"
+    outlined
+    >
+      Redis server is running
+ </v-alert>
+ 
  <vue-good-table
         ref="someTable"
         :columns="columns"
@@ -123,7 +134,7 @@ async function deleted(item: { id: any; }){
         :pagination-options="{
           enabled: true,
           mode: 'records',
-          perPage: 5,
+          perPage: 10,
           setCurrentPage: 1,
         }"
         theme="polar-bear"
@@ -145,10 +156,19 @@ async function deleted(item: { id: any; }){
            
           </div>
         </span>
+
+        <span v-if="props.column.field == 'category'">
+          <v-badge
+            :color="getColorFromCategory(props.row.category).color"
+            :content="getColorFromCategory(props.row.category).value"
+            inline
+        ></v-badge>
+        </span>
         
       </template>
 
-      </vue-good-table>
+  
+  </vue-good-table>
 </template>
 
 <style scoped>

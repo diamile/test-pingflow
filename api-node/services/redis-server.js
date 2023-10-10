@@ -1,5 +1,6 @@
 const Redis = require("ioredis");
 const config = require('dotenv').config().parsed
+
  const redisClient = new Redis({
         host: config.REDIS_HOST,
         port: config.REDIS_PORT,

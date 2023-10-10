@@ -1,7 +1,5 @@
 const cron = require('node-cron');
-
-
- function initCronTab(redisClient,client){
+ function initCronTab(redisClient,client,io){
   // Tâche à exécuter toutes les 30 secondes
   const data= {
     service:'crontab',
@@ -19,6 +17,8 @@ const cron = require('node-cron');
 
                 // Événement lorsque des données sont reçues sur le canal
                 client.on('message', (channel, message) => {
+                   
+                   io.emit("redis-status","ok")
                 console.log(`Message reçuess du canal '${channel}': ${message}`)
                 });
 
