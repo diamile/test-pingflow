@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {ref,defineProps} from "vue"
 import {useProductStore} from "@/stores/product.store"
+import Swal from 'sweetalert2'
 const store = useProductStore();
 
 let columns= [
@@ -51,6 +52,33 @@ let columns= [
        
 ]
 
+async function edit(item: { id: any; }){
+ 
+
+    const { value: title } = await Swal.fire({
+    title: 'Modification du titre',
+    input: 'text',
+    inputLabel: 'Titre',
+    inputPlaceholder: 'Entrer un titre'
+  })
+
+
+  store.updateProduct({title,id:item.id})
+
+
+  //store.updateProduct({title,item.id})
+
+ 
+  // if (title) {
+  //   Swal.fire(`Entered email: ${title}`)
+  // }
+  
+}
+
+function deleted(item: { id: any; }){
+  console.log('id',item.id)
+}
+
 </script>
 
 <template>
@@ -87,10 +115,10 @@ let columns= [
 
         <span v-if="props.column.field == 'action'">
           <div class="actions">
-            <v-btn color="secondary">
+            <v-btn color="secondary"  @click="edit(props.row)">
              Edit
             </v-btn>
-            <v-btn color="error">
+            <v-btn color="error" @click="deleted(props.row)">
              DELETE
             </v-btn>
            

@@ -1,5 +1,6 @@
 import io from 'socket.io-client';
-const socket = io('http://localhost:3000'); // Remplacez par l'URL de votre serveur Node.js
+const socket = io('http://localhost:3000'); 
+import axios from "axios"
 
 export async function fetchAllProductFromService(){
     try{
@@ -28,4 +29,14 @@ export function getSocket(){
     } catch(err){
         throw err;
     }
+}
+
+export async function updateProductFromService(body){
+    try{
+
+        const response = await axios.patch(`https://fakestoreapi.com/products/${body.id}`,{title:body.title});
+         return response.data
+       } catch(err){
+           throw err;
+       }
 }
