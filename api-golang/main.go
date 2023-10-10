@@ -14,6 +14,8 @@ import (
 func main() {
 	go StartRedisServer()
 
+	go listenCrontab()
+
 	http.HandleFunc("/", home)
 
 	startserver()
@@ -97,6 +99,48 @@ func StartRedisServer() {
 			fmt.Println("Clé Redis:", key)
 		}
 
+	}
+
+}
+
+func listenCrontab() {
+	client := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
+
+	pubsub := client.Subscribe("crontab_channel")
+
+	type Data struct {
+		service string
+		status  string
+	}
+
+	for msg := range pubsub.Channel() {
+		fmt.Printf("Message reçu sur le canal %s: %s\n", msg.Channel, msg.Payload)
+		var info Data
+		err := json.Unmarshal([]byte(msg.Payload), &info)
+
+		if err != nil {
+			fmt.Println("Erreur de décodage JSON:", err)
+			continue
+		}
+
+		pong, err := client.Ping().Result()
+		if err != nil {
+			fmt.Println("Erreur de connexion à Redis:", err)
+			return
+		}
+		fmt.Println("Connexion à Redis réussie:", pong)
+
+		if pong == "PONG" {
+			if err := client.Publish("new_crontab_channel", "ok").Err(); err != nil {
+				log.Println("Erreur lors de la republication du message:", err)
+			} else {
+				fmt.Printf("Message republié sur le canal '%s'\n", "new_crontab_channel")
+			}
+		}
 	}
 
 }
