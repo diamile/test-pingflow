@@ -22,6 +22,7 @@ func main() {
 
 }
 
+// création de mon serveur golang
 func startserver() {
 
 	port := 8080
@@ -33,10 +34,12 @@ func startserver() {
 
 }
 
+// controller qui intercepte et recupére la data dans la requéte
 func home(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Bienvenue sur go")
 }
 
+// fonction qui initialise le serveur redis
 func StartRedisServer() {
 
 	client := redis.NewClient(&redis.Options{
@@ -45,7 +48,7 @@ func StartRedisServer() {
 		DB:       0,
 	})
 
-	// Créez un pubsub et abonnez-vous au canal
+	// Créez un pubsub et abonnement au canal
 	pubsub := client.Subscribe("dsarr_channel")
 
 	type Message struct {
@@ -53,6 +56,7 @@ func StartRedisServer() {
 		Channel string `json:"channel"`
 	}
 
+	// boucle infinie qui permet d'écouter tous les messages entrantes dans la canal
 	for msg := range pubsub.Channel() {
 		fmt.Printf("Message reçu sur le canal %s: %s\n", msg.Channel, msg.Payload)
 		var message Message
@@ -103,6 +107,7 @@ func StartRedisServer() {
 
 }
 
+// fonction qui gére l'ecoute et les instructions du crontab
 func listenCrontab() {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
@@ -134,6 +139,7 @@ func listenCrontab() {
 		}
 		fmt.Println("Connexion à Redis réussie:", pong)
 
+		//verification de l'état du serveur redis
 		if pong == "PONG" {
 			if err := client.Publish("new_crontab_channel", "ok").Err(); err != nil {
 				client.Publish("new_crontab_channel", "ko").Err()
