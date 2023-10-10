@@ -118,7 +118,8 @@ async function deleted(item: { id: any; }){
         :columns="columns"
         :rows="store.products"
         :line-numbers="true"
-
+        :isLoading="store.products.length > 0 ? false : true"
+        
         :search-options="{
           enabled: true,
 

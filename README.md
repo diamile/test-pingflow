@@ -35,7 +35,7 @@ Ce guide explique comment lancer le projet composé de trois parties : une API e
 ## NB
 il peut arriver lors du lancement du projet que le back node nous renvoie
 un message d'erreur comme quoi que la clé redis n'existe , c'est normal il suffit juste d'attendre
-que le serveur go se lance complétement puis redemarrer le serveur node (ctrl+s)
+que le serveur go se lance complétement puis redemarrer le serveur node en tapant la commande rs
 
 
 
