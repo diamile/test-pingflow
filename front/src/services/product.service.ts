@@ -40,3 +40,14 @@ export async function updateProductFromService(body){
            throw err;
        }
 }
+
+export async function deletedProductFromService(body){
+    try{
+
+        const response = await axios.delete(`https://fakestoreapi.com/products/${body.id}`);
+         return response.data
+       } catch(err){
+           throw err;
+       }
+}
+

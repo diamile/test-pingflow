@@ -54,7 +54,6 @@ let columns= [
 
 async function edit(item: { id: any; }){
  
-
     const { value: title } = await Swal.fire({
     title: 'Modification du titre',
     input: 'text',
@@ -62,21 +61,41 @@ async function edit(item: { id: any; }){
     inputPlaceholder: 'Entrer un titre'
   })
 
+  if(title){
+    const response = await store.updateProduct({title,id:item.id})
+    if(response){
+      Swal.fire(
+      'Modifié',
+      '',
+      'success'
+    )
+  }
+  }else{
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Le titre est obligatoire!',
+    })
+  }
 
-  store.updateProduct({title,id:item.id})
-
-
-  //store.updateProduct({title,item.id})
-
- 
-  // if (title) {
-  //   Swal.fire(`Entered email: ${title}`)
-  // }
-  
+   
 }
 
-function deleted(item: { id: any; }){
-  console.log('id',item.id)
+async function deleted(item: { id: any; }){
+    Swal.fire({
+    title: 'Voulez-vous vraiment supprimer ce produit?',
+    showCancelButton: true,
+    confirmButtonText: 'Save',
+    denyButtonText: `Don't save`,
+  }).then(async (result) => {
+    
+    if (result.isConfirmed) {
+      Swal.fire('Saved!', '', 'success')
+       await store.deletedProduct(item)
+    } else if (result.isDenied) {
+      Swal.fire('Changes are not saved', '', 'info')
+    }
+  })
 }
 
 </script>
@@ -88,6 +107,7 @@ function deleted(item: { id: any; }){
         :columns="columns"
         :rows="store.products"
         :line-numbers="true"
+
         :search-options="{
           enabled: true,
 
@@ -97,8 +117,9 @@ function deleted(item: { id: any; }){
         }"
         :sort-options="{
           enabled: true,
-          initialSortBy: { field: 'title', type: 'asc' },
+          initialSortBy: { field: 'id', type: 'asc' },
         }"
+
         :pagination-options="{
           enabled: true,
           mode: 'records',

@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import {fetchAllProductFromService,getSocket,updateProductFromService} from '@/services/product.service';
+import {fetchAllProductFromService,getSocket,updateProductFromService,deletedProductFromService} from '@/services/product.service';
 
 
 export const useProductStore = defineStore('productStore',  {
@@ -46,8 +46,20 @@ export const useProductStore = defineStore('productStore',  {
            return item
         });
         this.products = productUpdate
-       
-         
+
+        return  true
+
+      }catch(err){
+        console.log(err)
+      }
+    },
+
+    async deletedProduct(body){
+      try{
+        const response = await deletedProductFromService(body);
+        const productDeleted = this.products.filter((item)=>item.id != body.id)
+        this.products = productDeleted
+        
       }catch(err){
         console.log(err)
       }
